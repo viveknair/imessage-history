@@ -10,7 +10,8 @@
     "build": "tsc",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "postbuild": "chmod +x dist/cli.js"
   },
   "keywords": [
     "imessage",
