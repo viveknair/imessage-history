@@ -1,72 +1,108 @@
 # iMessage History Analyzer
 
-A TypeScript project to analyze your iMessage chat history on macOS.
+A TypeScript tool to analyze your iMessage history, search messages, and export conversations.
 
 ## Prerequisites
 
-- macOS (as iMessage is only available on Apple devices)
-- Node.js 18+ installed
-- Access to your iMessage database (typically located at `~/Library/Messages/chat.db`)
+- macOS
+- Node.js 18+
+- Terminal access (iTerm2, Ghostty, etc.)
 
-## Installation
+## Setup
 
-1. Clone this repository:
+1. Clone the repository and install dependencies:
 
 ```bash
-git clone <repository-url>
+git clone <repo-url>
 cd imessage-history
-```
-
-2. Install dependencies:
-
-```bash
 npm install
 ```
 
-## Initial Setup
+2. Grant Full Disk Access to your terminal:
+   - Open System Settings
+   - Navigate to Privacy & Security → Full Disk Access
+   - Click the + button
+   - Add your terminal application (e.g., iTerm2, Ghostty)
+   - Restart your terminal
 
-Before running the application, you need to grant Full Disk Access to Node.js due to macOS privacy protections:
+This step is required because macOS protects the iMessage database. Your terminal needs Full Disk Access to read the chat.db file.
 
-1. Open System Settings
-2. Go to Privacy & Security > Full Disk Access
-3. Click the + button to add an application
-4. Navigate to your Node.js executable (typically `/usr/local/bin/node` or use `which node` in terminal to find it)
-5. Enable Full Disk Access for Node.js
+3. Grant Contacts Access:
+   - When you first run the tool, macOS will show a dialog asking for permission to access your Contacts
+   - Click "OK" to allow access
+   - This is required for mapping phone numbers/emails to contact names
+   - If you deny access, the tool will still work but will only show phone numbers/emails instead of contact names
 
 ## Usage
 
-Run the development server:
+### List All Contacts
 
 ```bash
-npm run dev
+npx tsx src/list-contacts.ts
 ```
 
-This will:
+This will show all contacts you've messaged, along with their phone numbers/emails and message counts.
 
-- Connect to your iMessage database
-- Display recent messages
-- Show available chats
-- List contact handles
-- Show messages from your most recent chat
+### Search Messages
+
+Basic search by name:
+
+```bash
+npx tsx src/find-messages.ts "John Smith"
+
+# Search by phone number
+npx tsx src/find-messages.ts "+12345678900"
+
+# Search by email
+npx tsx src/find-messages.ts "john@example.com"
+```
+
+### Search Options
+
+```bash
+# Show all available options
+npx tsx src/find-messages.ts --help
+
+# Show oldest messages first (chronological order)
+npx tsx src/find-messages.ts "John" --asc
+
+# Show all messages (no limit)
+npx tsx src/find-messages.ts "John" --no-limit
+
+# Limit to specific number of messages
+npx tsx src/find-messages.ts "John" --limit=500
+
+# Export messages to CSV
+npx tsx src/find-messages.ts "John" --csv
+
+# Export to specific CSV file
+npx tsx src/find-messages.ts "John" --csv=john-messages.csv
+
+# Combine options
+npx tsx src/find-messages.ts "John" --no-limit --asc --csv=full-history.csv
+```
+
+### Cache Management
+
+The tool caches contact information for better performance. To refresh:
+
+```bash
+# Clear contact cache and rebuild
+npx tsx src/find-messages.ts --refresh-cache
+```
 
 ## Features
 
-- Read messages from your iMessage database
-- View recent conversations
-- List all chats and contacts
-- Query messages by chat
+- 🔍 Search messages by contact name, phone number, or email
+- 📱 Automatic contact name resolution
+- 📅 Chronological or reverse-chronological ordering
+- 📊 Export conversations to CSV
+- 📎 Track attachments and group chats
+- 🚀 Fast searching with contact caching
 
 ## Security Note
 
-This tool reads your iMessage database in read-only mode and does not modify any data. All data stays on your local machine.
-
-## Troubleshooting
-
-If you see a "Failed to access iMessage database" error:
-
-1. Make sure you've granted Full Disk Access to Node.js as described in the Initial Setup section
-2. Verify that your iMessage database exists at `~/Library/Messages/chat.db`
-3. Try restarting your terminal after granting permissions
+This tool operates in read-only mode and never modifies your message database. All data stays on your machine.
 
 ## License
 

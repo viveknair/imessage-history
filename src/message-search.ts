@@ -23,6 +23,12 @@ console.log("🟡 [CACHE_PATH] Cache file location:", { CACHE_FILE });
 
 let contactMapCache: Map<string, string> | null = null;
 
+// Add at the top with other interfaces
+interface CSVOptions {
+  outputPath?: string;
+  delimiter?: string;
+}
+
 /**
  * Build a mapping of phone numbers/emails to contact names
  */
@@ -66,10 +72,26 @@ async function getContactMap(): Promise<Map<string, string>> {
 
   console.log(`📱 Processing ${macContacts.length} contacts...`);
 
-  // Debug: Log first few contacts to see their structure
-  console.log("\n🔍 First 5 contacts raw data:");
-  macContacts.slice(0, 5).forEach((contact, i) => {
-    console.log(`\nContact ${i + 1}:`, JSON.stringify(contact, null, 2));
+  // Debug: Log contacts that might be Doug
+  console.log("\n🔍 Contacts containing 'Doug' or 'Saf':");
+  macContacts.forEach((contact) => {
+    const fullName =
+      contact.fullName ||
+      (contact.givenName && contact.familyName
+        ? `${contact.givenName} ${contact.familyName}`
+        : undefined);
+    if (
+      fullName?.toLowerCase().includes("doug") ||
+      fullName?.toLowerCase().includes("saf")
+    ) {
+      console.log("Found potential match:", {
+        fullName,
+        givenName: contact.givenName,
+        familyName: contact.familyName,
+        phones: contact.phoneNumbers,
+        emails: contact.emailAddresses,
+      });
+    }
   });
 
   let skippedNoName = 0;
@@ -171,6 +193,19 @@ export async function findMessagesByContact(
         const searchQuery = query.toLowerCase();
         const contactName = name.toLowerCase();
 
+        // Debug log contact info
+        if (
+          name.toLowerCase().includes("doug") ||
+          name.toLowerCase().includes("saf")
+        ) {
+          console.log("🔍 Checking contact:", {
+            id,
+            name,
+            searchQuery,
+            contactName,
+          });
+        }
+
         // If searching by phone number
         if (query.match(/^\+?\d+$/)) {
           // Normalize both the search query and the contact ID for comparison
@@ -188,11 +223,17 @@ export async function findMessagesByContact(
         }
 
         // Otherwise search by name
-        return (
+        const isMatch =
           contactName === searchQuery || // Exact match
           contactName.split(/\s+/).includes(searchQuery) || // Full word match
-          contactName.includes(searchQuery) // Partial match
-        );
+          contactName.includes(searchQuery); // Partial match
+
+        // Debug log matches
+        if (isMatch) {
+          console.log("✅ Found match:", { id, name, searchQuery });
+        }
+
+        return isMatch;
       })
       .map(([id]) => id);
 
@@ -334,4 +375,53 @@ export function printMessages(messages: Message[]): void {
       }`
     );
   }
+}
+
+export function exportMessagesToCSV(
+  messages: Message[],
+  options: CSVOptions = {}
+): string {
+  const {
+    outputPath = `messages-${new Date().toISOString().split("T")[0]}.csv`,
+    delimiter = ",",
+  } = options;
+
+  // Define CSV columns
+  const headers = [
+    "Date",
+    "Direction",
+    "Sender",
+    "Recipient",
+    "Message",
+    "Has Attachments",
+    "Group Chat",
+    "Service",
+  ];
+
+  // Convert messages to CSV rows
+  const rows = messages.map((msg) => [
+    new Date(msg.date).toISOString(), // Date
+    msg.isFromMe ? "Sent" : "Received", // Direction
+    msg.isFromMe ? "You" : msg.contactName || msg.contact_id, // Sender
+    msg.isFromMe ? msg.contactName || msg.contact_id : "You", // Recipient
+    // Escape quotes and newlines in message text
+    msg.text ? `"${msg.text.replace(/"/g, '""').replace(/\n/g, " ")}"` : "", // Message
+    msg.attachments?.length ? "Yes" : "No", // Has Attachments
+    msg.groupName || "", // Group Chat
+    msg.service, // Service
+  ]);
+
+  // Combine headers and rows
+  const csv = [
+    headers.join(delimiter),
+    ...rows.map((row) => row.join(delimiter)),
+  ].join("\n");
+
+  // Write to file if outputPath is provided
+  if (outputPath) {
+    writeFileSync(outputPath, csv);
+    console.log(`\n💾 Exported ${messages.length} messages to ${outputPath}`);
+  }
+
+  return csv;
 }

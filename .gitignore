@@ -50,3 +50,5 @@ build/
 .tsbuildinfo
 
 .contact-cache.json
+
+*.csv
