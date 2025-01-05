@@ -1,0 +1,23 @@
+{
+  "name": "imessage-history",
+  "version": "1.0.0",
+  "description": "TypeScript project to analyze iMessage history",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "better-sqlite3": "^9.6.0",
+    "dotenv": "^16.3.1",
+    "node-mac-contacts": "^1.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "@types/sqlite3": "^3.1.11",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
