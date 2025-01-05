@@ -1,8 +1,13 @@
 import { Database } from "better-sqlite3";
-import { connectToIMessageDB } from "./db";
+import { connectToIMessageDB } from "./db.js";
 import nodeMacContacts from "node-mac-contacts";
 import { writeFileSync, readFileSync, existsSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+// Get current file path in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface Message {
   id: number;

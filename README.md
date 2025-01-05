@@ -35,51 +35,45 @@ This step is required because macOS protects the iMessage database. Your termina
 
 ## Usage
 
-### List All Contacts
+The tool provides a command-line interface with the following commands:
 
 ```bash
-npx tsx src/list-contacts.ts
-```
+# Show help and available commands
+imessage help
 
-This will show all contacts you've messaged, along with their phone numbers/emails and message counts.
+# List all contacts with message history
+imessage contacts
 
-### Search Messages
-
-Basic search by name:
-
-```bash
-npx tsx src/find-messages.ts "John Smith"
+# Search messages by name
+imessage search "John Smith"
 
 # Search by phone number
-npx tsx src/find-messages.ts "+12345678900"
+imessage search "+12345678900"
 
 # Search by email
-npx tsx src/find-messages.ts "john@example.com"
+imessage search "john@example.com"
 ```
 
 ### Search Options
 
 ```bash
-# Show all available options
-npx tsx src/find-messages.ts --help
-
 # Show oldest messages first (chronological order)
-npx tsx src/find-messages.ts "John" --asc
+imessage search "John" --asc
 
 # Show all messages (no limit)
-npx tsx src/find-messages.ts "John" --no-limit
+imessage search "John" --no-limit
 
 # Limit to specific number of messages
-npx tsx src/find-messages.ts "John" --limit=500
+imessage search "John" --limit=500
 
 # Export messages to CSV
-npx tsx src/find-messages.ts "John" --csv
+imessage search "John" --csv
 
 # Export to specific CSV file
-npx tsx src/find-messages.ts "John" --csv=john-messages.csv
+imessage search "John" --csv=john-messages.csv
 
 # Combine options
-npx tsx src/find-messages.ts "John" --no-limit --asc --csv=full-history.csv
+imessage search "John" --no-limit --asc --csv=full-history.csv
 ```
 
 ### Cache Management
@@ -88,7 +82,7 @@ The tool caches contact information for better performance. To refresh:
 
 ```bash
 # Clear contact cache and rebuild
-npx tsx src/find-messages.ts --refresh-cache
+imessage search --refresh-cache
 ```
 
 ## Features
