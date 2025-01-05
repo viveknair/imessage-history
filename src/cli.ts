@@ -4,14 +4,9 @@ import {
   findMessagesByContact,
   printMessages,
   exportMessagesToCSV,
-} from "./message-search.js";
+} from "./message-search";
 import { unlinkSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
-
-// Get current file path in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { join } from "path";
 
 const COMMANDS = {
   search: "search",
@@ -120,7 +115,7 @@ async function main() {
 
     case COMMANDS.contacts: {
       // Import dynamically to avoid circular dependencies
-      const { default: listContacts } = await import("./list-contacts.js");
+      const listContacts = require("./list-contacts").default;
       await listContacts();
       break;
     }
@@ -133,7 +128,7 @@ async function main() {
 }
 
 // Run if this is the main module
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main().catch((error) => {
     console.error("❌ Error:", error);
     process.exit(1);

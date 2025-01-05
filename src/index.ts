@@ -2,41 +2,39 @@ import { connectToIMessageDB } from "./db";
 import { findContactByName, getMessagesWithContact } from "./queries";
 
 async function main() {
-  try {
-    const db = await connectToIMessageDB();
-    const searchName = "Nandika";
+  // @ts-ignore
+  const db = connectToIMessageDB();
 
-    // Find contact
-    console.log(`🔍 Searching for contact with name: ${searchName}...`);
-    const contacts = await findContactByName(db, searchName);
+  try {
+    console.log('🔍 Searching for messages with "Nandika"...');
+    // @ts-ignore
+    const contacts = await findContactByName(db, "Nandika");
 
     if (contacts.length === 0) {
-      console.log("❌ No contacts found with that name");
-      db.close();
+      console.log("No contacts found matching that name");
       return;
     }
 
-    console.log("✅ Found contacts:", contacts);
+    console.log(`Found ${contacts.length} matching contacts`);
 
-    // Get messages for each matching contact
     for (const contact of contacts) {
-      console.log(`\n💬 Fetching messages with ${contact.contact_id}...`);
-      const messages = await getMessagesWithContact(db, contact.contact_id);
+      console.log(`\nMessages with ${contact.id}:`);
+      // @ts-ignore
+      const messages = await getMessagesWithContact(db, contact.id);
 
-      console.log(`Found ${messages.length} messages:`);
+      // @ts-ignore
       messages.forEach((msg) => {
+        const date = new Date(msg.date).toLocaleString();
         const direction = msg.is_from_me ? "→" : "←";
-        console.log(
-          `${msg.formatted_date} ${direction} ${msg.text || "[media message]"}`
-        );
+        console.log(`[${date}] ${direction} ${msg.text || "[no text]"}`);
       });
     }
-
+  } finally {
     db.close();
-  } catch (error) {
-    console.error("Error:", error);
-    process.exit(1);
   }
 }
 
-main();
+// Run if this is the main module
+if (require.main === module) {
+  main().catch(console.error);
+}

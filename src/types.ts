@@ -2,22 +2,18 @@ export interface Message {
   id: number;
   guid: string;
   text: string | null;
-  handle_id: number | null;
+  handle_id: number;
   service: string;
-  date: number;
-  formatted_date: string;
-  is_from_me: number;
+  date: string;
+  is_from_me: boolean;
   cache_roomnames: string | null;
-  contact_identifier?: string;
-  attachments?: string[];
-  groupName?: string;
+  contact_id: string;
 }
 
 export interface Handle {
   id: number;
-  contact_id: string;
+  guid: string;
   service: string;
-  group_name?: string;
 }
 
 export interface Chat {

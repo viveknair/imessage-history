@@ -6,7 +6,6 @@
   "bin": {
     "imessage": "dist/cli.js"
   },
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/cli.js",

@@ -1,25 +1,9 @@
 import { Database } from "better-sqlite3";
-import { connectToIMessageDB } from "./db.js";
+import { connectToIMessageDB } from "./db";
 import nodeMacContacts from "node-mac-contacts";
 import { writeFileSync, readFileSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
-
-// Get current file path in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-interface Message {
-  id: number;
-  text: string | null;
-  date: string;
-  isFromMe: boolean;
-  service: string;
-  attachments?: string[];
-  groupName?: string;
-  contactName?: string;
-  contact_id: string;
-}
+import { join } from "path";
+import { Message } from "./types";
 
 // Cache contact mapping
 const CACHE_FILE = join(__dirname, ".contact-cache.json");
