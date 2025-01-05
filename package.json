@@ -1,6 +1,6 @@
 {
   "name": "imessage-history",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "TypeScript tool to analyze iMessage history",
   "main": "dist/cli.js",
   "bin": {
