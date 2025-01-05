@@ -4,7 +4,7 @@
   "description": "TypeScript tool to analyze iMessage history",
   "main": "dist/cli.js",
   "bin": {
-    "imessage": "dist/cli.js"
+    "imessage-history": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
